@@ -1,0 +1,20 @@
+{
+  "lib/ens-contracts": {
+    "tag": {
+      "name": "v1.6.0",
+      "rev": "718b1c0058482126431000818c92b411bdf74007"
+    }
+  },
+  "lib/forge-std": {
+    "tag": {
+      "name": "v1.14.0",
+      "rev": "1801b0541f4fda118a10798fd3486bb7051c5dd6"
+    }
+  },
+  "lib/openzeppelin-contracts": {
+    "tag": {
+      "name": "v5.5.0",
+      "rev": "fcbae5394ae8ad52d8e580a3477db99814b9d565"
+    }
+  }
+}
