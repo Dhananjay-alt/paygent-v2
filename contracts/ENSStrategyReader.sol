@@ -3,7 +3,7 @@
 pragma solidity ^0.8.19;
 
 import { Resolver } from "lib/ens-contracts/contracts/resolvers/Resolver.sol";
-import { NameCoder } from "lib/ens-contracts/contracts/utils/NameCoder.sol";
+//import { NameCoder } from "lib/ens-contracts/contracts/utils/NameCoder.sol";
 
 
 interface IENSRegistry {
@@ -13,18 +13,18 @@ interface IENSRegistry {
 
 contract ENSStrategyReader{
 
-    using NameCoder for bytes;
+    //using NameCoder for bytes;
     address private immutable I_REGISTRYADDRESS;
 
     constructor(address registryAddress) {
         I_REGISTRYADDRESS = registryAddress;
     }
 
-    function namehash(string calldata name) public pure returns (bytes32) {
+    /*function namehash(string calldata name) public pure returns (bytes32) {
         bytes memory nameBytes = bytes(name);
 
         return nameBytes.namehash(0);
-    }
+    }*/
 
     function getResolver (bytes32 node) internal view returns (address) {
         address resolverAddress = IENSRegistry(I_REGISTRYADDRESS).resolver(node);

@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 
 import { Test } from "lib/forge-std/src/Test.sol";
 import { ENSStrategyReader } from "../contracts/ENSStrategyReader.sol";
-
+import { DeployENSStrategyReader } from "../scripts/DeployENSStrategyReader.s.sol";
 contract ENSStrategyReaderTest is Test {
     ENSStrategyReader public reader;
 
