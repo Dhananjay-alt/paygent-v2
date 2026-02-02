@@ -1,19 +1,19 @@
 🛠 Paygent v2 — Development Task Checklist
 Phase 1 — Project Setup
 
- Initialize Foundry project
+ 🟩Initialize Foundry project
 
- Configure repo structure (contracts, tests, scripts, docs)
+ 🟩Configure repo structure (contracts, tests, scripts, docs)
 
- Install OpenZeppelin + ENS dependencies
+ 🟩Install OpenZeppelin + ENS dependencies
 
- Setup testnet RPC + wallet
+ 🟩Setup testnet RPC + wallet
 
 Phase 2 — ENS Strategy Identity Layer
 
- Implement ENSStrategyReader contract
+ 🟩Implement ENSStrategyReader contract
 
- Read ENS resolver from registry
+ 🟩Read ENS resolver from registry
 
  Fetch strategy from ENS text records
 
@@ -23,13 +23,13 @@ Phase 2 — ENS Strategy Identity Layer
 
 Phase 3 — Paygent Agent Core
 
- Implement PaygentManager contract
+ 🟩Implement PaygentManager contract
 
- Add deposit and withdrawal logic
+ 🟩Add deposit and withdrawal logic
 
- Integrate ENS strategy reader
+ 🟩Integrate ENS strategy reader
 
- Implement basic agent state tracking
+ 🟩Implement basic agent state tracking
 
  Write PaygentManager tests
 
