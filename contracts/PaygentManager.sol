@@ -2,6 +2,65 @@
 
 pragma solidity ^0.8.19;
 
+import { ENSStrategyReader } from "./ENSStrategyReader.sol";
+
+interface IERC20 {
+    function trannsferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+}
 contract PaymentManager {
+    address private immutable i_ensRegistryAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e; // Mainnet ENS Registry Address
+    IERC20 public immutable token;
+
+    mapping(address => uint256) public balances;
+
+    event Deposit(address indexed user, uint256 amouunt);
+
+    constructor(address _tokenAddress) {
+        require(_tokenAddress != address(0), "Invalid token address");
+        token = IERC20(_tokenAddress);
+    }
+
+    function deposit(uint256 amount, string memory recipient) external {
+        require(amount > 0, "Cannot deposit zero amount");
+
+        address resolvedRecipient = resolveRecipient(recipient);
+
+        bool success = token.trannsferFrom(msg.sender, address(this), amount);
+        require(success, "Token transfer failed");
+
+        balances[resolvedRecipient] += amount;
+
+        emit Deposit(resolvedRecipient, amount);
+
+    }
+
+    function getBalance(address user) external view returns (uint256) {
+        return balances[user];
+    }
+
+    function getTotalDeposits() external view returns (uint256) {
+        return token.balanceOf(address(this));
+    }
+
+    function getStrategy(bytes32 node) external view returns (
+        string memory pool,
+        string memory paymentAmount,
+        string memory risk,
+        string memory rebalanceThreshold
+    ) {
+        ENSStrategyReader reader = new ENSStrategyReader(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e); // Mainnet ENS Registry Address
+        return reader.readStrategyTexts(node);
+    }
+
+    function executePayment(address merchantAddress) external {
+        (string memory pool, string memory paymentAmountStr, , ) = this.getStrategy(keccak256(abi.encodePacked(merchantAddress)));
+        uint256 paymentAmount = parseUint(paymentAmountStr);
+        require(balances[msg.sender] >= paymentAmount, "Insufficient balance");
+        balances[msg.sender] -= paymentAmount;
+
+        bool success = token.transferFrom(address(this), merchantAddress, paymentAmount);
+        require(success, "Payment transfer failed");
+    }
     
 }
