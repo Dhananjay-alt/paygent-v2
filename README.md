@@ -1,32 +1,39 @@
 # Paygent v2 — Agentic Liquidity & Payment Orchestrator  
 
-Paygent v2 is an **agent-driven payment orchestration system** that enables **batch-based, strategy-controlled payments** using ENS as a configuration layer and a Yellow-style execution abstraction for scalable settlement.
+Paygent v2 is an **agent-driven liquidity-aware payment orchestration system** that routes user funds through DeFi liquidity pools before performing **batch-based merchant settlement** using a Yellow-style execution abstraction.
 
-The system separates **payment intent execution (off-chain + accounting)** from **final settlement (on-chain)**, enabling gas-efficient batching and future-proof extensibility for ZK proofs and rollup-style settlement.
+The system separates **execution (off-chain planning + on-chain accounting)** from **final settlement (on-chain)**, enabling gas-efficient batching, capital efficiency, and future-proof extensibility for ZK proofs and rollup-style settlement.
 
 ---
 
 ## Core Idea  
 
-Traditional on-chain payments execute every transfer individually, causing high gas costs and limited scalability.
+Traditional on-chain payments keep funds idle and execute every transfer individually, leading to:
+
+- High gas costs  
+- Capital inefficiency  
+- Limited scalability  
 
 Paygent v2 introduces:
 
-- **ENS-based strategy configuration** (payment rules stored in ENS text records)
+- **ENS-based strategy configuration** (payment + liquidity rules stored on-chain)
 - **Agent-controlled execution layer** (off-chain orchestration)
-- **Session-based batch settlement** (single on-chain settlement transaction)
-- **Vault-based user balances** (pre-funded payment execution)
+- **Liquidity routing before settlement** (capital utilization phase)
+- **Session-based batch settlement** (single on-chain merchant payout)
+- **Vault-based user balances** (pre-funded execution layer)
 
-This architecture follows a **Yellow Execution Layer pattern**:
+This architecture follows a **Yellow Execution Layer pattern combined with DeFi liquidity orchestration**:
 
 ```
 Strategy (ENS)
      ↓
 Agent Executor (off-chain)
      ↓
-Batch Execution Session
+Execution Session
      ↓
-Single Settlement Transaction
+Liquidity Pool Routing
+     ↓
+Batch Settlement
      ↓
 Merchant Payment
 ```
@@ -44,6 +51,7 @@ Below is the high-level architecture of Paygent v2:
 │  - Payment Amount            │
 │  - Risk Profile              │
 │  - Pool Reference            │
+│  - Rebalance Threshold       │
 └──────────────┬───────────────┘
                │
                ▼
@@ -53,6 +61,7 @@ Below is the high-level architecture of Paygent v2:
 │ - Fetch ENS Strategy         │
 │ - Batch Planning             │
 │ - Balance Simulation         │
+│ - Liquidity Routing Logic    │
 │ - Session Control            │
 │ - Gas Optimization           │
 └──────────────┬───────────────┘
@@ -70,9 +79,19 @@ Below is the high-level architecture of Paygent v2:
 │ - executePayment() (batch)   │
 │ - Accounting Only            │
 │                              │
-│ Settlement Layer             │
+│ Settlement Orchestrator      │
+│ - Trigger Liquidity Routing  │
 │ - settleSession()            │
-│ - Single Transfer            │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│     Liquidity Pool Layer     │
+│  (Uniswap v4 / DeFi Pools)   │
+│------------------------------│
+│ - Temporary Capital Routing  │
+│ - Yield / Swap Execution     │
+│ - Strategy-Based Allocation  │
 └──────────────┬───────────────┘
                │
                ▼
@@ -93,9 +112,21 @@ Paygent v2 cleanly separates:
 | Layer | Responsibility |
 ------|----------------
 ENS Layer | Strategy configuration storage |
-Agent Layer | Execution planning & batching |
+Agent Layer | Execution planning + liquidity routing |
 Contract Layer | Accounting + settlement |
+Liquidity Layer | Capital utilization |
 Merchant Layer | Final fund recipient |
+
+---
+
+### Liquidity-Aware Execution  
+
+Unlike traditional payment rails, Paygent v2:
+
+- Routes capital through DeFi pools before settlement  
+- Avoids idle funds  
+- Enables strategy-controlled liquidity usage  
+- Preserves atomic merchant settlement  
 
 ---
 
@@ -105,6 +136,7 @@ Instead of transferring funds on every payment:
 
 - Payments are **accounted internally**
 - Multiple executions are grouped
+- Liquidity routing is coordinated off-chain
 - One final settlement transaction is used
 
 This improves:
@@ -112,18 +144,19 @@ This improves:
 - Gas efficiency  
 - Atomicity  
 - Fault tolerance  
-- Execution safety  
+- Capital utilization  
 
 ---
 
 ### Agent-Native Design  
 
-The off-chain executor acts as the system "brain":
+The off-chain executor acts as the system control layer:
 
 - Selects batch size  
-- Chooses execution timing  
+- Chooses liquidity routes  
 - Simulates balances  
 - Controls session lifecycle  
+- Optimizes execution timing  
 
 Smart contracts remain **simple, deterministic, and settlement-focused**.
 
@@ -177,6 +210,7 @@ Currently working on:
 
 - Off-chain Yellow executor node  
 - Batch simulation logic  
+- Liquidity routing integration  
 - Execution orchestration  
 
 ---
@@ -190,9 +224,11 @@ ENS Strategy Fetch
      ↓
 Agent Opens Session
      ↓
-Batch executePayment() Calls
+Batch Accounting Execution
      ↓
-Single settleSession()
+Liquidity Pool Routing
+     ↓
+Single Settlement Transaction
      ↓
 Merchant Receives Funds
 ```
@@ -206,6 +242,7 @@ Merchant Receives Funds
 - ERC20 Vault Accounting  
 - Agent-based Execution Model  
 - Yellow-style Session Architecture  
+- Uniswap v4 (Planned Liquidity Layer)  
 
 ---
 
@@ -214,7 +251,7 @@ Merchant Receives Funds
 ### Upcoming Milestones  
 
 - Yellow off-chain executor implementation  
-- Batch simulation engine  
+- Liquidity routing engine  
 - Uniswap v4 settlement integration  
 - Multi-merchant settlement support  
 - End-to-end demo deployment  
@@ -223,14 +260,16 @@ Merchant Receives Funds
 
 ## Project Vision  
 
-Paygent v2 aims to become a **modular payment coordination layer** enabling:
+Paygent v2 aims to become a **liquidity-aware programmable payment execution layer** enabling:
 
 - Automated subscriptions  
-- Liquidity-aware payments  
+- Yield-aware payments  
 - Strategy-controlled spending  
+- Capital-efficient settlement  
 - Rollup-compatible batching  
 - Agent-native execution  
 
 ---
 
+Built for hackathon-scale experimentation and future production-grade extensibility.
 
