@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 
 import { Resolver } from "lib/ens-contracts/contracts/resolvers/Resolver.sol";
 //import { NameCoder } from "lib/ens-contracts/contracts/utils/NameCoder.sol";
+import { Maths } from "./utils/Maths.sol";
 
 
 interface IENSRegistry {
@@ -15,10 +16,18 @@ contract ENSStrategyReader{
 
     //using NameCoder for bytes;
     address private immutable I_REGISTRYADDRESS;
+    using Maths for string;
 
     constructor(address registryAddress) {
         I_REGISTRYADDRESS = registryAddress;
     }
+    struct Strategy {
+    string pool;
+    uint256 paymentAmount;
+    uint256 paymentInterval;
+    uint256 rebalanceThreshold;
+    }
+
 
     /*function namehash(string calldata name) public pure returns (bytes32) {
         bytes memory nameBytes = bytes(name);
@@ -38,19 +47,15 @@ contract ENSStrategyReader{
         return Resolver(resolverAddress).text(node, key);
     }
 
-    function readStrategyTexts(bytes32 node) public view returns (
-        string memory pool,
-        string memory paymentAmount,
-        string memory risk,
-        string memory rebalanceThreshold
-    ) {
-        pool = getTextRecord(node, "pool");
-        paymentAmount = getTextRecord(node, "paymentAmount");
-        risk = getTextRecord(node, "risk");
-        rebalanceThreshold = getTextRecord(node, "rebalanceThreshold");
+    function readStrategy(bytes32 node) external view returns (Strategy memory s) {
 
-        return (pool, paymentAmount, risk, rebalanceThreshold);
+    s.pool = getTextRecord(node, "pool");
+    s.paymentAmount = getTextRecord(node, "paymentAmount").parseInt();
+    s.paymentInterval = getTextRecord(node, "paymentInterval").parseInt();
+    s.rebalanceThreshold = getTextRecord(node, "rebalanceThreshold").parseInt();
+
     }
+
 
 
 }
