@@ -2,127 +2,182 @@
 
 pragma solidity ^0.8.19;
 
-import { ENSStrategyReader } from "./ENSStrategyReader.sol";
-import { Maths } from "./utils/Maths.sol";
+import {ENSStrategyReader} from "./ENSStrategyReader.sol";
+import {Maths} from "./utils/Maths.sol";
+import {IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
-interface IERC20 {
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    function balanceOf(address account) external view returns (uint256);
-    function transfer(address recipient, uint256 amount) external returns (bool);
+interface ILiquidityExecutor {
+  function deployLiquidityForUser(address user, uint256 amount)
+    external
+    returns (uint256);
+  function withdrawForPayment(address user, uint256 amount) external returns (uint256);
 }
+
 contract PaymentManager {
+  enum ExecutionMode {
+    IDLE,
+    ACTIVE
+  }
 
-    enum ExecutionMode {
-        IDLE,
-        STRATEGY_RUNNING,
-        SETTLED
+  address private owner;
+  ENSStrategyReader private reader;
+  IERC20 public token;
+  ExecutionMode public currentMode = ExecutionMode.IDLE;
+  bytes32 public activeStrategyNode;
+  mapping(address => uint256) public nextPaymentTime;
+
+  ILiquidityExecutor public executor;
+
+  using Maths for string;
+
+  event Deposit(address indexed user, uint256 amount);
+  event PaymentExecuted(
+    address indexed user,
+    address indexed merchant,
+    uint256 amount
+  );
+  event LiquidityDeployed(
+    address indexed user,
+    uint256 amount,
+    uint256 liquidityMinted
+  );
+
+  constructor(address _tokenAddress, address readerAddress) {
+    require(_tokenAddress != address(0), "Invalid token address");
+    token = IERC20(_tokenAddress);
+    reader = ENSStrategyReader(readerAddress);
+    owner = msg.sender;
+  }
+  modifier onlyAgent() {
+    require(msg.sender == owner, "Not authorized");
+    _;
+  }
+  struct Position {
+    uint256 liquidity;
+    uint256 lastValue;
+  }
+
+  mapping(address => Position) public positions;
+  mapping(address => uint256) public vaultBalance;
+  function setExecutor(address _executor) external {
+    require(msg.sender == owner, "Not authorized");
+    require(_executor != address(0), "Invalid executor");
+    executor = ILiquidityExecutor(_executor);
+}
+
+
+  function deposit(uint256 amount) external {
+    require(amount > 0, "Cannot deposit zero amount");
+
+    bool success = token.transferFrom(msg.sender, address(this), amount);
+    require(success, "Token transfer failed");
+
+    vaultBalance[msg.sender] += amount;
+
+    emit Deposit(msg.sender, amount);
+    if (nextPaymentTime[msg.sender] == 0) {
+      nextPaymentTime[msg.sender] = block.timestamp;
+    }
+  }
+
+  function getBalance(address user) external view returns (uint256) {
+    return vaultBalance[user];
+  }
+
+  function getTotalDeposits() external view returns (uint256) {
+    return token.balanceOf(address(this));
+  }
+
+  function startStrategyExecution(bytes32 node) external {
+    require(msg.sender == owner, "Not authorized");
+    require(
+      currentMode == ExecutionMode.IDLE,
+      "Strategy already running or settled"
+    );
+
+    activeStrategyNode = node;
+    currentMode = ExecutionMode.ACTIVE;
+  }
+
+  function getStrategyTexts(
+    bytes32 strategyNode
+  )
+    external
+    view
+    returns (
+      string memory pool,
+      uint256 paymentAmount,
+      uint256 paymentInterval,
+      uint256 rebalanceThreshold
+    )
+  {
+    require(strategyNode == activeStrategyNode, "Strategy not active");
+
+    ENSStrategyReader.Strategy memory s = reader.readStrategy(strategyNode);
+
+    return (s.pool, s.paymentAmount, s.paymentInterval, s.rebalanceThreshold);
+  }
+
+  function executeScheduledPayment(
+    address user,
+    address merchantAddress
+  ) external onlyAgent {
+    require(currentMode == ExecutionMode.ACTIVE, "Not active");
+    require(block.timestamp >= nextPaymentTime[user], "Payment not due");
+
+    //( ,uint256 paymentAmount,uint256 paymentInterval, ) = reader.readStrategy(activeStrategyNode);
+
+    //(, uint256 paymentAmount, uint256 paymentInterval, ) = this
+    //  .getStrategyTexts(activeStrategyNode);
+    uint256 paymentAmount = 100000000; // 100 USDC
+    uint256 paymentInterval = 30 days;
+
+
+    // 1. Pull liquidity back into vault
+    uint256 received = executor.withdrawForPayment(user, paymentAmount);
+    require(received >= paymentAmount, "Withdraw failed");
+
+    // 2. Update vault
+    vaultBalance[user] += paymentAmount;
+
+    // 3. Pay merchant
+    require(vaultBalance[user] >= paymentAmount, "Vault insufficient");
+    vaultBalance[user] -= paymentAmount;
+
+    token.transfer(merchantAddress, paymentAmount);
+
+    // 4. Update accounting
+    if (positions[user].lastValue >= paymentAmount) {
+      positions[user].lastValue -= paymentAmount;
     }
 
+    // 5. Schedule next payment
+    nextPaymentTime[user] = block.timestamp + paymentInterval;
 
-    address private owner;
-    ENSStrategyReader private reader;
-    //ENSStrategyReader reader = new ENSStrategyReader(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
-    //address private immutable i_ensRegistryAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e; // Mainnet ENS Registry Address
-    IERC20 public immutable token;
-    ExecutionMode public currentMode = ExecutionMode.IDLE;
-    bytes32 public activeStrategyNode;
+    emit PaymentExecuted(user, merchantAddress, paymentAmount);
+  }
+  function deployLiquidityFromVault(
+    address user,
+    uint256 amount
+  ) external onlyAgent {
+    require(currentMode == ExecutionMode.ACTIVE, "Strategy not active");
+    require(amount > 0, "Zero amount");
+    require(vaultBalance[user] >= amount, "Insufficient vault balance");
 
+    token.transfer(address(executor), amount);
 
-    using Maths for string;
+    //  Deploy liquidity
+    uint256 liquidityMinted = executor.deployLiquidityForUser(user, amount);
+    require(liquidityMinted > 0, "Liquidity minty");
 
-    mapping(address => uint256) public balances;
+    //  Update vault
+    vaultBalance[user] -= amount;
 
-    event Deposit(address indexed user, uint256 amount);
-    event PaymentExecuted(address indexed user, address indexed merchant, uint256 amount);
+    //  Update position
+    positions[user].liquidity += liquidityMinted;
+    positions[user].lastValue += amount;
 
-    constructor(address _tokenAddress, address readerAddress) {
-        require(_tokenAddress != address(0), "Invalid token address");
-        token = IERC20(_tokenAddress);
-        reader = ENSStrategyReader(readerAddress);
-        owner = msg.sender;
-    }
+    emit LiquidityDeployed(user, amount, liquidityMinted);
+  }
 
-    function deposit(uint256 amount) external {
-        require(amount > 0, "Cannot deposit zero amount");
-
-        //address resolvedRecipient = resolveRecipient(recipient);
-
-        bool success = token.transferFrom(msg.sender, address(this), amount);
-        require(success, "Token transfer failed");
-
-        balances[msg.sender] += amount;
-
-        emit Deposit(msg.sender, amount);
-
-    }
-
-    function getBalance(address user) external view returns (uint256) {
-        return balances[user];
-    }
-
-    function getTotalDeposits() external view returns (uint256) {
-        return token.balanceOf(address(this));
-    }
-
-    function startStrategyExecution(bytes32 node) external {
-        require(msg.sender == owner, "Not authorized");
-        require(currentMode == ExecutionMode.IDLE, "Strategy already running or settled");
-        
-        activeStrategyNode = node;
-        currentMode = ExecutionMode.STRATEGY_RUNNING;
-    }
-
-    function getStrategyTexts(bytes32 strategyNode) external view returns (
-        string memory pool,
-        string memory paymentAmount,
-        string memory risk,
-        string memory rebalanceThreshold
-    ) {
-
-        //ENSStrategyReader reader = new ENSStrategyReader(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e); // Mainnet ENS Registry Address
-        require(strategyNode == activeStrategyNode, "Strategy not active");
-        return reader.readStrategyTexts(strategyNode);
-    }
-
-    /*function executePayment(address merchantAddress) external {
-        (string memory pool, string memory paymentAmountStr, , ) = this.getStrategy(keccak256(abi.encodePacked(merchantAddress)));
-        uint256 paymentAmount = parseUint(paymentAmountStr);
-        require(balances[msg.sender] >= paymentAmount, "Insufficient balance");
-        balances[msg.sender] -= paymentAmount;
-
-        bool success = token.transferFrom(address(this), merchantAddress, paymentAmount);
-        require(success, "Payment transfer failed");
-    }*/
-
-    function executePayment(address user, bytes32 strategyNode, address merchantAddress) external {
-        require(currentMode == ExecutionMode.STRATEGY_RUNNING, "STRATEGY is not running");
-        require(msg.sender == owner, "Not authorized");
-
-        require(merchantAddress != address(0), "Invalid merchant");
-
-        //ENSStrategyReader reader = new ENSStrategyReader(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
-
-        (, string memory paymentAmountStr, , ) = reader.readStrategyTexts(strategyNode);
-
-        uint256 paymentAmount =paymentAmountStr.parseInt();
-
-        require(paymentAmount > 0,"Invalid payment amount");
-
-        require(balances[user] >= paymentAmount, "Insufficient balance");
-
-        balances[user] -= paymentAmount;
-
-        bool success = token.transfer(merchantAddress, paymentAmount);
-        require(success, "Payment transfer failed");
-
-        emit PaymentExecuted(user, merchantAddress, paymentAmount);
-        currentMode = ExecutionMode.SETTLED;
-    }
-    function resetExecution() external {
-        require(msg.sender == owner, "Not authorized");
-        require(currentMode == ExecutionMode.SETTLED, "Strategy not settled");
-
-        currentMode = ExecutionMode.IDLE;
-        activeStrategyNode = bytes32(0);
-    }
 }
