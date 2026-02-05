@@ -59,8 +59,7 @@ contract PaymentManager {
 
   mapping(address => Position) public positions;
   mapping(address => uint256) public vaultBalance;
-  function setExecutor(address _executor) external {
-    require(msg.sender == owner, "Not authorized");
+  function setExecutor(address _executor) external onlyAgent {
     require(_executor != address(0), "Invalid executor");
     executor = ILiquidityExecutor(_executor);
 }
@@ -88,8 +87,7 @@ contract PaymentManager {
     return token.balanceOf(address(this));
   }
 
-  function startStrategyExecution(bytes32 node) external {
-    require(msg.sender == owner, "Not authorized");
+  function startStrategyExecution(bytes32 node) external onlyAgent {
     require(
       currentMode == ExecutionMode.IDLE,
       "Strategy already running or settled"
@@ -125,15 +123,14 @@ contract PaymentManager {
     require(currentMode == ExecutionMode.ACTIVE, "Not active");
     require(block.timestamp >= nextPaymentTime[user], "Payment not due");
 
-    //( ,uint256 paymentAmount,uint256 paymentInterval, ) = reader.readStrategy(activeStrategyNode);
+    ENSStrategyReader.Strategy memory s = reader.readStrategy(activeStrategyNode);
+    uint256 paymentAmount = s.paymentAmount;
+    uint256 paymentInterval = s.paymentInterval;
 
-    //(, uint256 paymentAmount, uint256 paymentInterval, ) = this
-    //  .getStrategyTexts(activeStrategyNode);
-    uint256 paymentAmount = 100000000; // 100 USDC
-    uint256 paymentInterval = 30 days;
 
 
     // 1. Pull liquidity back into vault
+    require(address(executor) != address(0), "Executor not set");
     uint256 received = executor.withdrawForPayment(user, paymentAmount);
     require(received >= paymentAmount, "Withdraw failed");
 
@@ -144,7 +141,7 @@ contract PaymentManager {
     require(vaultBalance[user] >= paymentAmount, "Vault insufficient");
     vaultBalance[user] -= paymentAmount;
 
-    token.transfer(merchantAddress, paymentAmount);
+    require(token.transfer(merchantAddress, paymentAmount), "Transfer failed");
 
     // 4. Update accounting
     if (positions[user].lastValue >= paymentAmount) {
@@ -164,7 +161,8 @@ contract PaymentManager {
     require(amount > 0, "Zero amount");
     require(vaultBalance[user] >= amount, "Insufficient vault balance");
 
-    token.transfer(address(executor), amount);
+    require(token.transfer(address(executor), amount), "Transfer failed");
+
 
     //  Deploy liquidity
     uint256 liquidityMinted = executor.deployLiquidityForUser(user, amount);
