@@ -14,6 +14,15 @@ contract DeployENS is Script {
 
         // 1️⃣ Deploy ENS Registry
         ENSRegistry registry = new ENSRegistry();
+        bytes32 ethNode = keccak256(
+            abi.encodePacked(bytes32(0), keccak256("eth"))
+        );
+
+        registry.setSubnodeOwner(
+            bytes32(0), // root node
+            keccak256("eth"), // label
+            msg.sender // owner
+        );
 
         // 2️⃣ Deploy SimpleTextResolver
         SimpleTextResolver resolver = new SimpleTextResolver(registry);

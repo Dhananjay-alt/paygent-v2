@@ -36,8 +36,10 @@ contract MockLiquidityExecutor is ILiquidityExecutor {
     ) external returns (uint256) {
         //Simulate withdrawal
         require(liquidity[user] >= amount, "Not enough liquidity");
+        
+        require(token.transfer(msg.sender, amount), "Transfer failed");
+
         liquidity[user] -= amount;
-        token.transfer(msg.sender, amount);
         return amount;
     }
 }
