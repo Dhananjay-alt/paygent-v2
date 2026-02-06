@@ -1,0 +1,16 @@
+ MockUSDC deployed at: 0x4082219A8Ca34fBeC8ae6E2cf86eE910dB39EB9d
+  ENSStrategyReader deployed at: 0xC1D1dC72fA0eaafb18cb757Fc57A3CE27f6cc4a5
+  PaymentManager deployed at: 0x722B23dcb1Cb68B1a5e99E3e59939b6c91F8D72b
+  MockLiquidityExecutor deployed at: 0x8b22763B87416Bf2e180Ca09196d3a853d226d78
+  Executor set in PaymentManager
+
+
+
+
+
+
+
+
+
+  PublicResolver : 0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5
+  dhananjay-paygent-eth : 0x0c3fd11975849d570fb3bf2b8bfcaacf832bd0b827c4fc54f88a1905ff95b1f9
