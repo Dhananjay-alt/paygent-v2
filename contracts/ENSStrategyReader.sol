@@ -22,6 +22,7 @@ contract ENSStrategyReader{
         I_REGISTRYADDRESS = registryAddress;
     }
     struct Strategy {
+    string merchant;
     string pool;
     uint256 paymentAmount;
     uint256 paymentInterval;
@@ -49,6 +50,7 @@ contract ENSStrategyReader{
 
     function readStrategy(bytes32 node) external view returns (Strategy memory s) {
 
+    s.merchant = getTextRecord(node, "merchant");
     s.pool = getTextRecord(node, "pool");
     s.paymentAmount = getTextRecord(node, "paymentAmount").parseInt();
     s.paymentInterval = getTextRecord(node, "paymentInterval").parseInt();

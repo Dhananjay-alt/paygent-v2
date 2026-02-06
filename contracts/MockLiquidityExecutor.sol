@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.19;
 
-import {ILiquidityExecutor} from "./PaygentManager.sol";
-import {IERC20} from "./PaygentManager.sol";
+import {ILiquidityExecutor} from "./PaymentManager.sol";
+import {IERC20} from "./PaymentManager.sol";
 
 contract MockLiquidityExecutor is ILiquidityExecutor {
     IERC20 public token;
@@ -27,7 +27,8 @@ contract MockLiquidityExecutor is ILiquidityExecutor {
     }
 
     function depositFromManager(uint256 amount) external {
-        token.transferFrom(msg.sender, address(this), amount);
+        bool success = token.transferFrom(msg.sender, address(this), amount);
+        require(success, "Deposit from manager failed");
     }
 
     function withdrawForPayment(
@@ -42,4 +43,8 @@ contract MockLiquidityExecutor is ILiquidityExecutor {
         liquidity[user] -= amount;
         return amount;
     }
+    function depositFor(address user, uint256 amount) external {
+    liquidity[user] += amount;
+    }
+
 }

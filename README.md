@@ -68,7 +68,7 @@ Below is the high-level architecture of Paygent v2:
                │
                ▼
 ┌──────────────────────────────┐
-│      PaygentManager          │   (On-chain)
+│      PaymentManager          │   (On-chain)
 │------------------------------│
 │ Vault Layer                  │
 │ - User Deposits              │
@@ -185,7 +185,7 @@ Smart contracts remain **simple, deterministic, and settlement-focused**.
 
 ### Phase 3 — Paygent Agent Core ✅  
 
-- PaygentManager contract implemented  
+- PaymentManager contract implemented  
 - Vault deposit system added  
 - User balance accounting implemented  
 - ENS integration wired into payment execution  
