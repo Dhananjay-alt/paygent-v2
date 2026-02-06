@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "lib/forge-std/src/Script.sol";
+import { Script, console } from  "lib/forge-std/src/Script.sol";
 
 import "lib/ens-contracts/contracts/registry/ENSRegistry.sol";
 //import "lib/ens-contracts/contracts/resolvers/PublicResolver.sol";
 //import { TextResolver } from "lib/ens-contracts/contracts/resolvers/profiles/TextResolver.sol";
-import "../contracts/ens/SimpleTextResolver.sol";
+import { SimpleTextResolver } from "../contracts/ens/SimpleTextResolver.sol";
 
 contract DeployENS is Script {
     function run() external {
@@ -26,6 +26,7 @@ contract DeployENS is Script {
 
         // 2️⃣ Deploy SimpleTextResolver
         SimpleTextResolver resolver = new SimpleTextResolver(registry);
+        registry.setResolver(ethNode, address(resolver));
 
         vm.stopBroadcast();
 
