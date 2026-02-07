@@ -1,275 +1,140 @@
-# Paygent v2 — Agentic Liquidity & Payment Orchestrator  
+# Paygent v2
 
-Paygent v2 is an **agent-driven liquidity-aware payment orchestration system** that routes user funds through DeFi liquidity pools before performing **batch-based merchant settlement** using a Yellow-style execution abstraction.
+> Paygent v2 uses ENS as a live, on-chain configuration layer that controls how subscription payments execute.
 
-The system separates **execution (off-chain planning + on-chain accounting)** from **final settlement (on-chain)**, enabling gas-efficient batching, capital efficiency, and future-proof extensibility for ZK proofs and rollup-style settlement.
+Paygent v2 is an on-chain subscription payment protocol that turns **idle subscription funds into executable, automated payments** using ENS-based configuration and Chainlink Automation.
 
----
-
-## Core Idea  
-
-Traditional on-chain payments keep funds idle and execute every transfer individually, leading to:
-
-- High gas costs  
-- Capital inefficiency  
-- Limited scalability  
-
-Paygent v2 introduces:
-
-- **ENS-based strategy configuration** (payment + liquidity rules stored on-chain)
-- **Agent-controlled execution layer** (off-chain orchestration)
-- **Liquidity routing before settlement** (capital utilization phase)
-- **Session-based batch settlement** (single on-chain merchant payout)
-- **Vault-based user balances** (pre-funded execution layer)
-
-This architecture follows a **Yellow Execution Layer pattern combined with DeFi liquidity orchestration**:
-
-```
-Strategy (ENS)
-     ↓
-Agent Executor (off-chain)
-     ↓
-Execution Session
-     ↓
-Liquidity Pool Routing
-     ↓
-Batch Settlement
-     ↓
-Merchant Payment
-```
+In other words, **Paygent v2 makes idle subscription funds alive** — funds are not just locked, they are actively scheduled, verified, and executed on-chain under strict protocol rules.
 
 ---
 
-## System Architecture  
+## Problem
 
-Below is the high-level architecture of Paygent v2:
+Traditional subscription systems lock capital until payment time.
 
-```
-┌──────────────────────────────┐
-│           ENS Layer          │
-│  Strategy Config (Text)      │
-│  - Payment Amount            │
-│  - Risk Profile              │
-│  - Pool Reference            │
-│  - Rebalance Threshold       │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│     Yellow Agent Executor    │   (Off-chain)
-│------------------------------│
-│ - Fetch ENS Strategy         │
-│ - Batch Planning             │
-│ - Balance Simulation         │
-│ - Liquidity Routing Logic    │
-│ - Session Control            │
-│ - Gas Optimization           │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│      PaymentManager          │   (On-chain)
-│------------------------------│
-│ Vault Layer                  │
-│ - User Deposits              │
-│ - Internal Balances          │
-│                              │
-│ Execution Session Layer      │
-│ - startSession()             │
-│ - executePayment() (batch)   │
-│ - Accounting Only            │
-│                              │
-│ Settlement Orchestrator      │
-│ - Trigger Liquidity Routing  │
-│ - settleSession()            │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│     Liquidity Pool Layer     │
-│  (Uniswap v4 / DeFi Pools)   │
-│------------------------------│
-│ - Temporary Capital Routing  │
-│ - Yield / Swap Execution     │
-│ - Strategy-Based Allocation  │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│        Merchant Wallet       │
-│   Receives Final Settlement  │
-└──────────────────────────────┘
-```
+- Funds sit idle and opaque
+- Execution relies on trusted off-chain schedulers
+- Payment logic is hardcoded and inflexible
+
+Capital is locked, but not alive.
 
 ---
 
-## Architecture Design Principles  
+## Solution
 
-### Separation of Concerns  
+Paygent v2 separates **custody**, **configuration**, and **execution**:
 
-Paygent v2 cleanly separates:
+- Funds are held safely in user vaults
+- Payment logic is defined externally via ENS
+- Execution is triggered autonomously via on-chain automation
 
-| Layer | Responsibility |
-------|----------------
-ENS Layer | Strategy configuration storage |
-Agent Layer | Execution planning + liquidity routing |
-Contract Layer | Accounting + settlement |
-Liquidity Layer | Capital utilization |
-Merchant Layer | Final fund recipient |
+Funds only become executable when explicit protocol conditions are met.  
+Automation cannot bypass safety checks.
 
 ---
 
-### Liquidity-Aware Execution  
+## Architecture Overview
 
-Unlike traditional payment rails, Paygent v2:
+- **User Vault**  
+  Holds deposited funds and enforces accounting rules.
 
-- Routes capital through DeFi pools before settlement  
-- Avoids idle funds  
-- Enables strategy-controlled liquidity usage  
-- Preserves atomic merchant settlement  
+- **ENS Strategy (Configuration Layer)**  
+  Stores payment parameters such as merchant, amount, and interval.
 
----
+- **Executor (Liquidity Layer)**  
+  Holds explicitly deployed liquidity for execution.
 
-### Batch Execution Model  
+- **Automation (Execution Trigger)**  
+  Calls into the protocol only when conditions are satisfied.
 
-Instead of transferring funds on every payment:
-
-- Payments are **accounted internally**
-- Multiple executions are grouped
-- Liquidity routing is coordinated off-chain
-- One final settlement transaction is used
-
-This improves:
-
-- Gas efficiency  
-- Atomicity  
-- Fault tolerance  
-- Capital utilization  
+This separation ensures flexibility without sacrificing safety.
 
 ---
 
-### Agent-Native Design  
+## ENS Integration (Prize Eligibility)
 
-The off-chain executor acts as the system control layer:
+Paygent v2 uses Ethereum Name Service (ENS) as a **core protocol dependency**, not a naming convenience.
 
-- Selects batch size  
-- Chooses liquidity routes  
-- Simulates balances  
-- Controls session lifecycle  
-- Optimizes execution timing  
+Payment strategies are stored as ENS text records and resolved on-chain at execution time:
 
-Smart contracts remain **simple, deterministic, and settlement-focused**.
+- `merchant` — recipient address  
+- `paymentAmount` — amount per interval  
+- `paymentInterval` — execution frequency  
 
----
+### Why ENS Matters
 
-## Current Development Progress  
+ENS acts as **protocol state**:
 
-### Phase 1 — Project Setup ✅  
+- Payment logic lives in ENS, not immutable bytecode
+- Strategies can be updated without redeploying contracts
+- Automation always executes against the latest ENS configuration
+- All changes are transparent and on-chain
 
-- Foundry project initialized  
-- Repository structure configured  
-- ENS and OpenZeppelin dependencies installed  
-- RPC and wallet configured  
+### Eligibility Statement
 
----
+Paygent v2 is eligible for the ENS track because **the protocol cannot function without ENS**.
 
-### Phase 2 — ENS Strategy Layer ✅  
+Without ENS:
+- payment strategies cannot be defined
+- execution parameters cannot be updated
+- automation has no source of truth
 
-- ENSStrategyReader contract implemented  
-- ENS registry + resolver integration  
-- Strategy reading from ENS text records  
-- Payment amount parsing using Maths utility  
-- Mainnet fork testing completed  
+ENS directly controls how and when funds become executable.
 
 ---
 
-### Phase 3 — Paygent Agent Core ✅  
+## Automation
 
-- PaymentManager contract implemented  
-- Vault deposit system added  
-- User balance accounting implemented  
-- ENS integration wired into payment execution  
+Paygent v2 integrates with **Chainlink Automation** for autonomous execution.
 
----
+- `checkUpkeep()` verifies payment conditions on-chain
+- `performUpkeep()` executes payments through the manager
+- Execution is permissionless and fully verifiable
 
-### Phase 4 — Execution Layer (Yellow Integration) 🚧  
-
-Completed so far:
-
-- Session-based execution model added  
-- ExecutionSession struct implemented  
-- startSession() lifecycle implemented  
-- Batch-style executePayment accounting logic  
-- Settlement phase abstraction added  
-- Event system added:
-  - SessionStarted  
-  - PaymentExecuted  
-  - SessionSettled  
-
-Currently working on:
-
-- Off-chain Yellow executor node  
-- Batch simulation logic  
-- Liquidity routing integration  
-- Execution orchestration  
+Automation has been **successfully verified live on Sepolia**, with Chainlink nodes executing payments and spending LINK for gas.
 
 ---
 
-## Current Execution Flow  
+## On-chain Verification (Sepolia)
 
-```
-User Deposit
-     ↓
-ENS Strategy Fetch
-     ↓
-Agent Opens Session
-     ↓
-Batch Accounting Execution
-     ↓
-Liquidity Pool Routing
-     ↓
-Single Settlement Transaction
-     ↓
-Merchant Receives Funds
-```
+The end-to-end flow can be verified via:
+
+- Chainlink Automation history (`Perform Upkeep`)
+- `PaymentExecuted` events emitted by the protocol
+- ERC20 `Transfer` events to the merchant address
+
+Relevant contract addresses are documented in `docs/sepolia-addresses.txt`.
 
 ---
 
-## Tech Stack  
+## Safety Guarantees
 
-- Solidity (Foundry)  
-- ENS Integration  
-- ERC20 Vault Accounting  
-- Agent-based Execution Model  
-- Yellow-style Session Architecture  
-- Uniswap v4 (Planned Liquidity Layer)  
+- Automation cannot execute early
+- Liquidity must be explicitly deployed before execution
+- Vault funds and executable liquidity are strictly separated
+- Failed conditions halt execution safely
 
----
-
-## Roadmap  
-
-### Upcoming Milestones  
-
-- Yellow off-chain executor implementation  
-- Liquidity routing engine  
-- Uniswap v4 settlement integration  
-- Multi-merchant settlement support  
-- End-to-end demo deployment  
+These guarantees were observed and validated during live testing.
 
 ---
 
-## Project Vision  
+## Status
 
-Paygent v2 aims to become a **liquidity-aware programmable payment execution layer** enabling:
-
-- Automated subscriptions  
-- Yield-aware payments  
-- Strategy-controlled spending  
-- Capital-efficient settlement  
-- Rollup-compatible batching  
-- Agent-native execution  
+- ✅ ENS-configured subscription strategies
+- ✅ Vault and executor separation enforced
+- ✅ Chainlink Automation live
+- ✅ End-to-end execution verified on-chain
 
 ---
 
-Built for hackathon-scale experimentation and future production-grade extensibility.
+## Future Work
 
+- Uniswap-based liquidity executor
+- Batched multi-user automation
+- Mainnet deployment
+
+---
+
+## Summary
+
+Paygent v2 demonstrates how ENS and automation can be combined to create **safe, flexible, and autonomous subscription payments** — where funds are not merely locked, but **alive and executable on-chain**.
