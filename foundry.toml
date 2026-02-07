@@ -4,7 +4,7 @@ out = "out"
 libs = ["lib"]
 test = "test"
 script = "scripts"
-solc_version = "0.8.20"
+solc_version = "0.8.24"
 
 
 optimizer = true
@@ -15,6 +15,7 @@ remappings = [
   "@ensdomains/buffer/=lib/buffer/",
   "@ensdomains/ens-contracts/=lib/ens-contracts/",
   "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/"
+
 ]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

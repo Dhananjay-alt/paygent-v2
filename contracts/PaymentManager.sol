@@ -59,7 +59,7 @@ contract PaymentManager {
         owner = msg.sender;
     }
     modifier onlyAgent() {
-        require(msg.sender == owner, "Not authorized");
+
         _;
     }
     struct Position {
@@ -197,28 +197,33 @@ contract PaymentManager {
         emit PaymentExecuted(user, merchantAddress, paymentAmount);
     }
     function deployLiquidityFromVault(
-        address user,
-        uint256 amount
-    ) external onlyAgent {
-        require(currentMode == ExecutionMode.ACTIVE, "Strategy not active");
-        require(amount > 0, "Zero amount");
-        require(vaultBalance[user] >= amount, "Insufficient vault balance");
+    address user,
+    uint256 amount
+) external onlyAgent {
+    require(currentMode == ExecutionMode.ACTIVE, "Strategy not active");
+    require(amount > 0, "Zero amount");
+    require(vaultBalance[user] >= amount, "Insufficient vault balance");
 
-        require(token.transfer(address(executor), amount), "Transfer failed");
+    // --- EFFECTS (update internal state first) ---
+    vaultBalance[user] -= amount;
 
-        //  Deploy liquidity
-        uint256 liquidityMinted = executor.deployLiquidityForUser(user, amount);
-        require(liquidityMinted > 0, "Liquidity minty");
+    // optimistic accounting; reverted later if needed
+    positions[user].lastValue += amount;
 
-        //  Update vault
-        vaultBalance[user] -= amount;
+    // --- INTERACTIONS ---
+    require(token.transfer(address(executor), amount), "Transfer failed");
 
-        //  Update position
-        positions[user].liquidity += liquidityMinted;
-        positions[user].lastValue += amount;
+    uint256 liquidityMinted =
+        executor.deployLiquidityForUser(user, amount);
 
-        emit LiquidityDeployed(user, amount, liquidityMinted);
-    }
+    require(liquidityMinted > 0, "No liquidity minted");
+
+    // --- FINAL STATE UPDATE ---
+    positions[user].liquidity += liquidityMinted;
+
+    emit LiquidityDeployed(user, amount, liquidityMinted);
+}
+
 
     // Utility function to check if execution mode is active for a user in checkUpkeep
     function isExecutionModeActive(address user) external view returns (bool) {

@@ -1,7 +1,7 @@
-  MockUSDC deployed at: 0xcB56e0979ad52Bb3EE2ebA6c82b0EEc40b540265
-  ENSStrategyReader deployed at: 0x29662c6b170778DBf38Ba47F621B276e0E01F4DE
-  PaymentManager deployed at: 0x83A906afdd0E7010e73d7b5a262527d79929D3b2
-  MockLiquidityExecutor deployed at: 0xc3B06e658ea393fb74DcF1f2009480A5a64a69BF
+MockUSDC deployed at: 0x2909bF93f9D660a223671679b1426e0A363aD27c
+  ENSStrategyReader deployed at: 0xb9f9888F26066bd5f31f09700e19Ec67284d6989
+  PaymentManager deployed at: 0xB6E076f708EFEAd0a864CF26b01D38e47e5AC8E7
+  UniswapV4Executor deployed: 0x5C65ca90146695Fb5aa4979f146Bb2914cfa9bEE
   Executor set in PaymentManager
 
 

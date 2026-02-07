@@ -1,0 +1,10 @@
+  MockUSDC deployed at: 0xF92a796D684D0338e0D0e29E53Eb8F945DFf98DF
+  ENSStrategyReader deployed at: 0x7A025139C3F0559394F19e9E7290b8140E7DFB66
+  PaymentManager deployed at: 0x2b22b385d3efF54F10F6CfDc445213214553dB14
+  UniswapV4Executor deployed: 0xD27C7f6c19eF44b71379e542D0bCf75c9f5fd4F4
+  Executor set in PaymentManager
+  Automation deployed: 0x04AC7197d217cdE31DC2DE96a7cFf7C621Aa176C
+
+
+    PublicResolver : 0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5
+  dhananjay-paygent-eth : 0x0c3fd11975849d570fb3bf2b8bfcaacf832bd0b827c4fc54f88a1905ff95b1f9
