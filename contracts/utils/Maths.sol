@@ -1,6 +1,6 @@
 //SPDX-LIcense-Identifier: MIT
 
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 library Maths {
     function parseInt(string memory _a) internal pure returns (uint256) {

@@ -1,4 +1,16 @@
 {
+  "lib/chainlink": {
+    "tag": {
+      "name": "v2.32.0",
+      "rev": "7e833a4d423ae32a0e51b15b5dfc288c18cbdae8"
+    }
+  },
+  "lib/chainlink-brownie-contracts": {
+    "tag": {
+      "name": "1.3.0",
+      "rev": "5cb41fbc9b525338b6098da5ea7dd0b7e92f89e4"
+    }
+  },
   "lib/ens-contracts": {
     "tag": {
       "name": "v1.6.0",

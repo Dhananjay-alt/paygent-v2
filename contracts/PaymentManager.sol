@@ -1,6 +1,6 @@
 //SPDX-LIcense-Identifier: MIT
 
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import {ENSStrategyReader} from "./ENSStrategyReader.sol";
 import {Maths} from "./utils/Maths.sol";
@@ -147,7 +147,7 @@ contract PaymentManager {
 
     function executeScheduledPayment(
         address user
-    ) external onlyAgent {
+    ) external {
         require(currentMode == ExecutionMode.ACTIVE, "Not active");
         require(block.timestamp >= nextPaymentTime[user], "Payment not due");
 
@@ -171,7 +171,7 @@ contract PaymentManager {
 
 
         // 2. Update vault
-        vaultBalance[user] += paymentAmount;
+        vaultBalance[user] += received;
 
 
         // 3. Pay merchant
@@ -218,5 +218,15 @@ contract PaymentManager {
         positions[user].lastValue += amount;
 
         emit LiquidityDeployed(user, amount, liquidityMinted);
+    }
+
+    // Utility function to check if execution mode is active for a user in checkUpkeep
+    function isExecutionModeActive(address user) external view returns (bool) {
+        if (currentMode == ExecutionMode.ACTIVE && nextPaymentTime[user] > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
