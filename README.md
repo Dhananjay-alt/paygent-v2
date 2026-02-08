@@ -171,10 +171,15 @@ See commit: <4b7614dc434f79c047803026928b3384f3aa4d54>
 1. A user deposits funds into the PaymentManager vault.
 2. The payment strategy is resolved on-chain from ENS
    (`dhananjay-paygent.eth` via the Public Resolver).
-3. The strategy is activated, making funds eligible for execution.
-4. Chainlink Automation continuously monitors execution conditions.
-5. When conditions are met, liquidity is withdrawn from the executor.
-6. The scheduled payment is executed on-chain to the merchant address.
+3. The strategy is activated, making the vault eligible for execution.
+4. Funds are explicitly deployed from the vault into the executor
+   using `deployLiquidityFromVault`, marking them as executable.
+   Automation cannot make funds executable — only this explicit
+   protocol state transition can.
+5. Chainlink Automation continuously monitors execution conditions.
+6. When conditions are met, liquidity is withdrawn from the executor.
+7. The scheduled payment is executed on-chain to the merchant address.
+
 
 ## Summary
 
