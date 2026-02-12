@@ -1,0 +1,489 @@
+.
+├── README.md
+├── addresses.txt
+├── backend
+├── broadcast
+│   ├── DeployENS.s.sol
+│   │   ├── 11155111
+│   │   └── 31337
+│   ├── DeployENSStrategyReader.s.sol
+│   │   └── 31337
+│   ├── DeployMockUSDC.s.sol
+│   │   └── 11155111
+│   ├── DeployPaygent.s.sol
+│   │   ├── 11155111
+│   │   └── 31337
+│   ├── DeployPaygentAutomation.s.sol
+│   │   └── 11155111
+│   └── DeployPaymentAutomation.s.sol
+│       └── 11155111
+├── cache
+│   ├── DeployENS.s.sol
+│   │   ├── 11155111
+│   │   └── 31337
+│   ├── DeployENSStrategyReader.s.sol
+│   │   ├── 11155111
+│   │   └── 31337
+│   ├── DeployMockUSDC.s.sol
+│   │   └── 11155111
+│   ├── DeployPaygent.s.sol
+│   │   ├── 11155111
+│   │   └── 31337
+│   ├── DeployPaygentAutomation.s.sol
+│   │   └── 11155111
+│   ├── DeployPaymentAutomation.s.sol
+│   │   └── 11155111
+│   └── solidity-files-cache.json
+├── contracts
+│   ├── ENSStrategyReader.sol
+│   ├── MockLiquidityExecutor.sol
+│   ├── MockMerchant.sol
+│   ├── MockUSDC.sol
+│   ├── PaymentAutomation.sol
+│   ├── PaymentManager.sol
+│   ├── UniswapExecutor.sol
+│   ├── ens
+│   │   └── SimpleTextResolver.sol
+│   └── utils
+│       ├── AddressParser.sol
+│       └── Maths.sol
+├── docs
+│   ├── Flowchart.png
+│   ├── architecture.md
+│   ├── sepolia-addresses.txt
+│   └── setup.md
+├── foundry.lock
+├── foundry.toml
+├── lib
+│   ├── buffer
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── contracts
+│   │   ├── hardhat.config.js
+│   │   ├── migrations
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── test
+│   │   └── truffle.js
+│   ├── chainlink
+│   │   ├── CHANGELOG.md
+│   │   ├── GNUmakefile
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── SECURITY.md
+│   │   ├── ccip
+│   │   ├── common
+│   │   ├── config_docs_test.go
+│   │   ├── core
+│   │   ├── deployment
+│   │   ├── docs
+│   │   ├── flake.lock
+│   │   ├── flake.nix
+│   │   ├── fuzz
+│   │   ├── go.md
+│   │   ├── go.mod
+│   │   ├── go.sum
+│   │   ├── integration-tests
+│   │   ├── internal
+│   │   ├── main.go
+│   │   ├── main_integration_test.go
+│   │   ├── main_test.go
+│   │   ├── nix-darwin-shell-hook.sh
+│   │   ├── nix.conf
+│   │   ├── operator_ui
+│   │   ├── package.json
+│   │   ├── plugins
+│   │   ├── pnpm-lock.yaml
+│   │   ├── shell.nix
+│   │   ├── sonar-project.properties
+│   │   ├── system-tests
+│   │   ├── testdata
+│   │   └── tools
+│   ├── chainlink-brownie-contracts
+│   │   ├── README.md
+│   │   ├── contracts
+│   │   ├── package.json
+│   │   ├── version.txt
+│   │   └── yarn.lock
+│   ├── ens-contracts
+│   │   ├── LICENSE.txt
+│   │   ├── README.md
+│   │   ├── bun.lock
+│   │   ├── contracts
+│   │   ├── deploy
+│   │   ├── deployments
+│   │   ├── hardhat.config.cts
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   ├── patches
+│   │   ├── scripts
+│   │   ├── tasks
+│   │   ├── test
+│   │   ├── tsconfig.json
+│   │   └── typings-custom
+│   ├── forge-std
+│   │   ├── CONTRIBUTING.md
+│   │   ├── LICENSE-APACHE
+│   │   ├── LICENSE-MIT
+│   │   ├── README.md
+│   │   ├── RELEASE_CHECKLIST.md
+│   │   ├── foundry.toml
+│   │   ├── package.json
+│   │   ├── scripts
+│   │   ├── src
+│   │   └── test
+│   ├── openzeppelin-contracts
+│   │   ├── CHANGELOG.md
+│   │   ├── CODE_OF_CONDUCT.md
+│   │   ├── CONTRIBUTING.md
+│   │   ├── FUNDING.json
+│   │   ├── GUIDELINES.md
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── RELEASING.md
+│   │   ├── SECURITY.md
+│   │   ├── audits
+│   │   ├── certora
+│   │   ├── contracts
+│   │   ├── docs
+│   │   ├── eslint.config.mjs
+│   │   ├── foundry.toml
+│   │   ├── fv-requirements.txt
+│   │   ├── hardhat
+│   │   ├── hardhat.config.js
+│   │   ├── lib
+│   │   ├── logo.svg
+│   │   ├── netlify.toml
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── remappings.txt
+│   │   ├── renovate.json
+│   │   ├── scripts
+│   │   ├── slither.config.json
+│   │   ├── solhint.config.js
+│   │   └── test
+│   └── v4-core
+│       ├── CONTRIBUTING.md
+│       ├── README.md
+│       ├── SECURITY.md
+│       ├── docs
+│       ├── echidna.config.yml
+│       ├── foundry.toml
+│       ├── justfile
+│       ├── lib
+│       ├── licenses
+│       ├── remappings.txt
+│       ├── snapshots
+│       ├── src
+│       └── test
+├── nitrolite
+│   ├── LICENSE
+│   ├── README.md
+│   ├── clearnode
+│   │   ├── Dockerfile
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── action_log_store.go
+│   │   ├── action_log_store_test.go
+│   │   ├── app_session.go
+│   │   ├── app_session_service.go
+│   │   ├── app_session_service_test.go
+│   │   ├── asset_config.go
+│   │   ├── asset_config_test.go
+│   │   ├── auth.go
+│   │   ├── auth_test.go
+│   │   ├── blockchain_action.go
+│   │   ├── blockchain_action_test.go
+│   │   ├── blockchain_config.go
+│   │   ├── blockchain_config_test.go
+│   │   ├── blockchain_worker.go
+│   │   ├── blockchain_worker_test.go
+│   │   ├── channel.go
+│   │   ├── channel_service.go
+│   │   ├── channel_service_test.go
+│   │   ├── chart
+│   │   ├── chart.go
+│   │   ├── config
+│   │   ├── config.go
+│   │   ├── contract_event.go
+│   │   ├── contract_event_test.go
+│   │   ├── custody.go
+│   │   ├── custody_test.go
+│   │   ├── database.go
+│   │   ├── docker-compose.yml
+│   │   ├── docs
+│   │   ├── eth_listener.go
+│   │   ├── eth_listener_test.go
+│   │   ├── export_transactions_cli.go
+│   │   ├── export_transactions_cli_test.go
+│   │   ├── go.mod
+│   │   ├── go.sum
+│   │   ├── ledger.go
+│   │   ├── ledger_transaction.go
+│   │   ├── list_options.go
+│   │   ├── log.go
+│   │   ├── main.go
+│   │   ├── message_cache.go
+│   │   ├── message_cache_test.go
+│   │   ├── metrics.go
+│   │   ├── nitrolite
+│   │   ├── notification.go
+│   │   ├── pkg
+│   │   ├── reconcile_cli.go
+│   │   ├── rpc.go
+│   │   ├── rpc_connection.go
+│   │   ├── rpc_connection_test.go
+│   │   ├── rpc_node.go
+│   │   ├── rpc_node_test.go
+│   │   ├── rpc_router.go
+│   │   ├── rpc_router_auth.go
+│   │   ├── rpc_router_callback.go
+│   │   ├── rpc_router_private.go
+│   │   ├── rpc_router_private_test.go
+│   │   ├── rpc_router_public.go
+│   │   ├── rpc_router_public_test.go
+│   │   ├── rpc_router_test.go
+│   │   ├── rpc_store.go
+│   │   ├── rpc_store_test.go
+│   │   ├── rpc_test.go
+│   │   ├── scripts
+│   │   ├── session_key.go
+│   │   ├── session_keys_test.go
+│   │   ├── signer.go
+│   │   ├── signer_test.go
+│   │   ├── state.go
+│   │   ├── tag.go
+│   │   ├── tag_test.go
+│   │   └── testing
+│   ├── contract
+│   │   ├── Makefile
+│   │   ├── README.md
+│   │   ├── broadcast
+│   │   ├── cache
+│   │   ├── deployments
+│   │   ├── foundry.toml
+│   │   ├── lib
+│   │   ├── out
+│   │   ├── script
+│   │   ├── src
+│   │   └── test
+│   ├── docker-compose.yml
+│   ├── docs
+│   │   ├── NitroRPC.md
+│   │   ├── PROTOCOL.md
+│   │   ├── SECURITY.md
+│   │   └── img
+│   ├── erc7824-docs
+│   │   ├── README.md
+│   │   ├── blog
+│   │   ├── docs
+│   │   ├── docusaurus.config.js
+│   │   ├── firebase.json
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── sidebars.js
+│   │   ├── src
+│   │   └── static
+│   ├── examples
+│   │   ├── cerebro
+│   │   └── hello-nitrolite
+│   ├── go.work
+│   ├── go.work.sum
+│   ├── integration
+│   │   ├── README.md
+│   │   ├── common
+│   │   ├── jest.config.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── tests
+│   │   └── tsconfig.json
+│   └── sdk
+│       ├── README.md
+│       ├── docs
+│       ├── jest.config.js
+│       ├── jest.integration.config.js
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── scripts
+│       ├── src
+│       ├── test
+│       ├── tsconfig.json
+│       ├── tsconfig.prod.json
+│       └── tutorials
+├── out
+│   ├── AddressParser.sol
+│   │   └── AddressParser.json
+│   ├── AutomationCompatibleInterface.sol
+│   │   └── AutomationCompatibleInterface.json
+│   ├── BalanceDelta.sol
+│   │   └── BalanceDeltaLibrary.json
+│   ├── Base.sol
+│   │   ├── CommonBase.json
+│   │   ├── ScriptBase.json
+│   │   └── TestBase.json
+│   ├── BeforeSwapDelta.sol
+│   │   └── BeforeSwapDeltaLibrary.json
+│   ├── Context.sol
+│   │   └── Context.json
+│   ├── Currency.sol
+│   │   └── CurrencyLibrary.json
+│   ├── CustomRevert.sol
+│   │   └── CustomRevert.json
+│   ├── DeployENS.s.sol
+│   │   └── DeployENS.json
+│   ├── DeployMockUSDC.s.sol
+│   │   └── DeployMockUSDC.json
+│   ├── DeployPaygent.s.sol
+│   │   └── DeployPaygent.json
+│   ├── DeployPaymentAutomation.s.sol
+│   │   └── DeployPaymentAutomation.json
+│   ├── ENS.sol
+│   │   └── ENS.json
+│   ├── ENSRegistry.sol
+│   │   └── ENSRegistry.json
+│   ├── ENSStrategyReader.sol
+│   │   ├── ENSStrategyReader.json
+│   │   └── IENSRegistry.json
+│   ├── ERC20.sol
+│   │   └── ERC20.json
+│   ├── ExecutorWithdraw.t.sol
+│   │   └── ExecutorWithdrawTest.json
+│   ├── Flow.s.sol
+│   │   └── Flow.json
+│   ├── IABIResolver.sol
+│   │   └── IABIResolver.json
+│   ├── IAddrResolver.sol
+│   │   └── IAddrResolver.json
+│   ├── IAddressResolver.sol
+│   │   └── IAddressResolver.json
+│   ├── IContentHashResolver.sol
+│   │   └── IContentHashResolver.json
+│   ├── IDNSRecordResolver.sol
+│   │   └── IDNSRecordResolver.json
+│   ├── IDNSZoneResolver.sol
+│   │   └── IDNSZoneResolver.json
+│   ├── IERC165.sol
+│   │   └── IERC165.json
+│   ├── IERC20.sol
+│   │   └── IERC20.json
+│   ├── IERC20Metadata.sol
+│   │   └── IERC20Metadata.json
+│   ├── IERC20Minimal.sol
+│   │   └── IERC20Minimal.json
+│   ├── IERC6909Claims.sol
+│   │   └── IERC6909Claims.json
+│   ├── IExtendedResolver.sol
+│   │   └── IExtendedResolver.json
+│   ├── IExtsload.sol
+│   │   └── IExtsload.json
+│   ├── IExttload.sol
+│   │   └── IExttload.json
+│   ├── IHooks.sol
+│   │   └── IHooks.json
+│   ├── IInterfaceResolver.sol
+│   │   └── IInterfaceResolver.json
+│   ├── IMulticall3.sol
+│   │   └── IMulticall3.json
+│   ├── INameResolver.sol
+│   │   └── INameResolver.json
+│   ├── IPoolManager.sol
+│   │   └── IPoolManager.json
+│   ├── IProtocolFees.sol
+│   │   └── IProtocolFees.json
+│   ├── IPubkeyResolver.sol
+│   │   └── IPubkeyResolver.json
+│   ├── ITextResolver.sol
+│   │   └── ITextResolver.json
+│   ├── Maths.sol
+│   │   └── Maths.json
+│   ├── MockLiquidityExecutor.sol
+│   │   └── MockLiquidityExecutor.json
+│   ├── MockMerchant.sol
+│   │   └── MpckMerchant.json
+│   ├── MockUSDC.sol
+│   │   └── MockUSDC.json
+│   ├── PaygentManager.t.sol
+│   │   └── PaymentManagerTest.json
+│   ├── PaymentAutomation.sol
+│   │   └── PaymentAutomation.json
+│   ├── PaymentManager.sol
+│   │   ├── ILiquidityExecutor.json
+│   │   └── PaymentManager.json
+│   ├── PoolId.sol
+│   │   └── PoolIdLibrary.json
+│   ├── Resolver.sol
+│   │   └── Resolver.json
+│   ├── RunAgent.s.sol
+│   │   └── RunAgent.json
+│   ├── SafeCast.sol
+│   │   └── SafeCast.json
+│   ├── Script.sol
+│   │   └── Script.json
+│   ├── SimpleTextResolver.sol
+│   │   └── SimpleTextResolver.json
+│   ├── StdAssertions.sol
+│   │   └── StdAssertions.json
+│   ├── StdChains.sol
+│   │   └── StdChains.json
+│   ├── StdCheats.sol
+│   │   ├── StdCheats.json
+│   │   └── StdCheatsSafe.json
+│   ├── StdConstants.sol
+│   │   └── StdConstants.json
+│   ├── StdError.sol
+│   │   └── stdError.json
+│   ├── StdInvariant.sol
+│   │   └── StdInvariant.json
+│   ├── StdJson.sol
+│   │   └── stdJson.json
+│   ├── StdMath.sol
+│   │   └── stdMath.json
+│   ├── StdStorage.sol
+│   │   ├── stdStorage.json
+│   │   └── stdStorageSafe.json
+│   ├── StdStyle.sol
+│   │   └── StdStyle.json
+│   ├── StdToml.sol
+│   │   └── stdToml.json
+│   ├── StdUtils.sol
+│   │   └── StdUtils.json
+│   ├── Test.sol
+│   │   └── Test.json
+│   ├── Uniswap4Executor.sol
+│   │   └── UniswapV4Executor.json
+│   ├── UniswapExecutor.sol
+│   │   └── UniswapExecutor.json
+│   ├── UniswapV4Executor.sol
+│   │   └── UniswapV4Executor.json
+│   ├── Vm.sol
+│   │   ├── Vm.json
+│   │   └── VmSafe.json
+│   ├── build-info
+│   │   ├── a0b7155bdbcb4886.json
+│   │   ├── b03cfd74d246e49c.json
+│   │   └── b7a3ac015923bf8f.json
+│   ├── console.sol
+│   │   └── console.json
+│   ├── draft-IERC6093.sol
+│   │   ├── IERC1155Errors.json
+│   │   ├── IERC20Errors.json
+│   │   └── IERC721Errors.json
+│   └── safeconsole.sol
+│       └── safeconsole.json
+├── package-lock.json
+├── package.json
+├── scripts
+│   ├── DeployENS.s.sol
+│   ├── DeployMockUSDC.s.sol
+│   ├── DeployPaygent.s.sol
+│   ├── DeployPaymentAutomation.s.sol
+│   ├── Flow.s.sol
+│   └── RunAgent.s.sol
+├── structure.txt
+└── test
+    ├── PaygentManager.t.sol
+    ├── UniswapExecutor.t.sol
+    └── microTest
+        └── ExecutorWithdraw.t.sol
+
+202 directories, 285 files

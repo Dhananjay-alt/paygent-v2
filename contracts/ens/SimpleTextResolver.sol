@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "lib/ens-contracts/contracts/registry/ENS.sol";
+import { ENS } from "lib/ens-contracts/contracts/registry/ENS.sol";
 
 contract SimpleTextResolver {
     ENS public immutable ens;

@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import { Script, console } from  "lib/forge-std/src/Script.sol";
 
-import "lib/ens-contracts/contracts/registry/ENSRegistry.sol";
+import { ENSRegistry } from "lib/ens-contracts/contracts/registry/ENSRegistry.sol";
 //import "lib/ens-contracts/contracts/resolvers/PublicResolver.sol";
 //import { TextResolver } from "lib/ens-contracts/contracts/resolvers/profiles/TextResolver.sol";
 import { SimpleTextResolver } from "../contracts/ens/SimpleTextResolver.sol";
